@@ -1,3 +1,4 @@
+
 pragma solidity ^0.8.0;
 
 
@@ -133,6 +134,8 @@ contract Exchange is ERC20{
     function cryptoDevTokenToEth(uint _tokensSold , uint _minEth) public {
         uint256 tokenReserve = getReserve();
         uint256 ethBought = getAmountOfToken(_tokensSold, tokenReserve, address(this).balance);
+
+        require(ethBought >= _minEth , "Inssufficient output amount");
 
         //trasfer token from users address to the contract
         ERC20(cryptoDevTokenAddress).transferFrom(msg.sender,address(this),_tokensSold);

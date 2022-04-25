@@ -1,6 +1,7 @@
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC721/ERC20.sol";
+
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 
 contract Exchange is ERC20{
@@ -22,7 +23,7 @@ contract Exchange is ERC20{
 
      function getReserve() public view returns (uint) {
 
-         return ERC(cryptoDevTokenAddress).balanceOf(address(this));
+         return ERC20(cryptoDevTokenAddress).balanceOf(address(this));
      }
 
      /**function to     add liquidity  */
@@ -31,7 +32,7 @@ contract Exchange is ERC20{
          uint liquidity;
          uint ethBalance = address(this).balance;
          uint cryptoDevTokenReserve = getReserve();
-         ERC crytoDevToken = ERC(cryptoDevTokenAddress);
+         ERC20 cryptoDevToken = ERC20(cryptoDevTokenAddress);
 
 
          /**if the reserve is empty , take any amount of ether or crptoDev coz there is ratio */
@@ -39,7 +40,7 @@ contract Exchange is ERC20{
              /**
              1.transfer the crytodebv token from the user to our contrct
               */
-              crytoDevToken.transferFrom(msg.sender , address(this) , _amount);
+              cryptoDevToken.transferFrom(msg.sender , address(this) , _amount);
 
               liquidity = ethBalance;
               
@@ -119,25 +120,25 @@ contract Exchange is ERC20{
            because `address(this).balance`
          already contains the `msg.value` user has sent in the given call so we need to subtract it to get the actual input reserve
         */
-         uint256 tokensBought = getAmountOfToken(msg.sender, address(this).balance -msg.value, tokenReserve);
+         uint256 tokensBought = getAmountOfToken(msg.value, address(this).balance -msg.value, tokenReserve);
 
          require(tokensBought >= _minTokens , "insufficient output amount");
 
          //transfer to the user
-         ERC20(cryptoDevTokenAddress).tranfer(msg.sender, tokensBought);
+         ERC20(cryptoDevTokenAddress).transfer(msg.sender, tokensBought);
 
      }
 
     // swap from tokens to Ether
-    function cryptoDevTokenToEt(uint _tokensSold , uint _minEth) public {
+    function cryptoDevTokenToEth(uint _tokensSold , uint _minEth) public {
         uint256 tokenReserve = getReserve();
         uint256 ethBought = getAmountOfToken(_tokensSold, tokenReserve, address(this).balance);
 
         //trasfer token from users address to the contract
-        ERC20(cryptoDevTokenAddress).transferFrom(msg.sender,address(this),_tokenSold);
+        ERC20(cryptoDevTokenAddress).transferFrom(msg.sender,address(this),_tokensSold);
 
         //send the ethBought to the user wallet
-        payable(msg.sender).transferFrom(ethBought);
+        payable(msg.sender).transfer(ethBought);
     }
 
 

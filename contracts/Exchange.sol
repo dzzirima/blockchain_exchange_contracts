@@ -112,6 +112,24 @@ contract Exchange is ERC20{
          return numerator /denominator ;
      }
 
+     //swap eth to crypto dev
+     function ethToCryptoDevToken(uint _minTokens) public payable {
+         uint256 tokenReserve = getReserve();
+          /*Notice that the `inputReserve` we are sending is equal to  `address(this).balance - msg.value` instead of just `address(this).balance`
+           because `address(this).balance`
+         already contains the `msg.value` user has sent in the given call so we need to subtract it to get the actual input reserve
+        */
+         uint256 tokensBought = getAmountOfToken(msg.sender, address(this).balance -msg.value, tokenReserve);
+
+         require(tokensBought >= _minTokens , "insufficient output amount");
+
+         //transfer to the user
+         ERC20(cryptoDevTokenAddress).tranfer(msg.sender, tokensBought);
+
+     }
+
+     
+
 
 
 

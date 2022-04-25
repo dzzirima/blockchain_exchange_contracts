@@ -94,6 +94,28 @@ contract Exchange is ERC20{
         return (ethAmount,cryptoDevTokenAmount);
      }
 
+     /**function to do the swap which goes 2 ways eth to cryptoDev an  d vise versa
+        again we will charge 1% for the fees
+        Input amount with fees = (input amount - (1*(input amount)/100)) = ((input amount)*99)/100
+        Δy in our case is tokens to be recieved, Δx = ((input amount)*99)/100, x = inputReserve, y = outputReserve
+
+     */
+     function getAmountOfToken(uint256 inputAmount , uint256 inputReserve ,uint256 outputReserve) public pure returns (uint256){
+         require(inputReserve > 0  && outputReserve > 0 , "Invalid reserves..");
+         // we are charging 1% feee
+         uint256 inputAmountWithFess = inputAmount*99;
+
+         //using the curve formula
+         uint256 numerator   = inputAmountWithFess * outputReserve;
+         uint256 denominator = (inputReserve * 100) + inputAmountWithFess;
+
+         return numerator /denominator ;
+     }
+
+
+
+
+
 
 
 

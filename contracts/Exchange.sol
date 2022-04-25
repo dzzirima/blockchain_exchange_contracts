@@ -128,7 +128,19 @@ contract Exchange is ERC20{
 
      }
 
-     
+    // swap from tokens to Ether
+    function cryptoDevTokenToEt(uint _tokensSold , uint _minEth) public {
+        uint256 tokenReserve = getReserve();
+        uint256 ethBought = getAmountOfToken(_tokensSold, tokenReserve, address(this).balance);
+
+        //trasfer token from users address to the contract
+        ERC20(cryptoDevTokenAddress).transferFrom(msg.sender,address(this),_tokenSold);
+
+        //send the ethBought to the user wallet
+        payable(msg.sender).transferFrom(ethBought);
+    }
+
+
 
 
 
